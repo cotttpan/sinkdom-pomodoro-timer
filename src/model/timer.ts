@@ -93,11 +93,13 @@ export function reducer(ev: Dispatcher, _: Observable<AppState>) {
         .mapTo((state: S): S => ({ ...state, isTitleEditing: true }))
 
     const onTitleInput$ = select(ev, TIMER_ACTION.TITLE_INPUT)
-        .debounceTime(200)
+        .debounceTime(50)
+        .map(x => x.payload)
         .pluck<any, string>('target', 'value')
         .map(title => (state: S): S => ({ ...state, title, isTitleEditing: true }))
 
     const onTitleSubmit$ = select(ev, TIMER_ACTION.TIELE_SUBSMIT)
+        .do(x => x.payload.preventDefault())
         .mapTo((state: S): S => ({ ...state, isTitleEditing: false }))
 
     //

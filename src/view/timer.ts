@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs/Observable'
+import { isEmpty, isFalsy, isTruthy } from '@cotto/utils.ts'
 import { div, h1, input, form, button, span } from '@cotto/sinkdom'
 import TIMER_ACTION from '@/action/timer'
 
@@ -9,24 +10,40 @@ export interface Props {
     isWorking$: Observable<boolean>
 }
 
+const focus = (el: HTMLInputElement) => el.focus()
+
+
 export default function TimerView(props: Props) {
+    const isTitleEmpty$ = props.title$.map(isEmpty).shareReplay(1)
+    const isEditing$ = props.isEditing$.shareReplay(1)
+    const shuoldShowTitleForm$ = Observable.zip(isTitleEmpty$, isEditing$, (a, b) => a || b)
+        .distinctUntilChanged()
+        .shareReplay(1)
+
     return (
         div({ class: 'timer' }, [
             /* timer title */
-            div({}, [
+            div([
                 Observable.merge(
-                    props.isEditing$.filter(x => x === false).mapTo(
-                        h1({ dblclick: TIMER_ACTION.TITLE_SELECT_FOR_EIDT }, props.title$),
+                    shuoldShowTitleForm$.filter(isTruthy).map(_ =>
+                        div([
+                            form({ key: 'form', on: { submit: TIMER_ACTION.TIELE_SUBSMIT } }, [
+                                input({
+                                    type: 'text',
+                                    placeholder: 'Enter task name...',
+                                    autofocus: true,
+                                    on: { input: TIMER_ACTION.TITLE_INPUT, blur: TIMER_ACTION.TIELE_SUBSMIT },
+                                    value: props.title$,
+                                    hook: { insert: focus },
+                                }),
+                            ]),
+                        ]),
                     ),
-                    props.isEditing$.filter(x => x === true).mapTo(
-                        form({ on: { submit: TIMER_ACTION.TIELE_SUBSMIT } }, [
-                            input({
-                                type: 'text',
-                                placeholder: 'Enter task name...',
-                                autofocus: true,
-                                on: { input: TIMER_ACTION.TITLE_INPUT },
-                                value: props.title$,
-                            }),
+                    shuoldShowTitleForm$.filter(isFalsy).map(_ =>
+                        div([
+                            h1({ key: 'heading', on: { dblclick: TIMER_ACTION.TITLE_SELECT_FOR_EIDT } }, [
+                                props.title$,
+                            ]),
                         ]),
                     ),
                 ),
