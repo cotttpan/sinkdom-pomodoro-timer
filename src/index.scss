@@ -1,0 +1,39 @@
+
+/* Base
+----------------------------------------------------------- */
+// Variables and mixins
+@import "~spectre.css/src/variables";
+@import "~spectre.css/src/mixins";
+
+// Reset and dependencies
+@import "~spectre.css/src/normalize";
+@import "~spectre.css/src/base";
+
+// Elements
+@import "~spectre.css/src/typography";
+@import "~spectre.css/src/asian";
+@import "~spectre.css/src/tables";
+@import "~spectre.css/src/buttons";
+@import "~spectre.css/src/forms";
+@import "~spectre.css/src/labels";
+@import "~spectre.css/src/codes";
+@import "~spectre.css/src/media";
+
+// Layout
+@import "~spectre.css/src/layout";
+@import "~spectre.css/src/navbar";
+
+// Utility classes
+@import "~spectre.css/src/animations";
+@import "~spectre.css/src/utilities";
+
+html,
+body {
+    overflow: hidden;
+    height: 100%;
+    background: #f9f9f9;
+}
+
+/* Propejct
+----------------------------------------------------------- */
+// @import './view/**/*.scss';
