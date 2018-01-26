@@ -3,11 +3,12 @@ import { async } from 'rxjs/scheduler/async'
 import { mount } from '@cotto/sinkdom'
 import { flux } from 'flux-helpers'
 import isAction from '@/utils/is-action'
-import { model as Timer } from '@/model/timer'
+import { model as timer } from '@/model/timer'
+import { logger } from '@/model/devtools'
 import App from '@/view/app'
 
 /* boot flux */
-const models = [Timer]
+const models = [timer, logger]
 const store = flux(models, { wildcard: true })
 const tree = App(store.state$)
 
