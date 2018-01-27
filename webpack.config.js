@@ -9,6 +9,7 @@ const compact = require('lodash.compact')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const MinifyPlugin = require('babel-minify-webpack-plugin')
 let glob = require('glob')
+const rxPaths = require('rxjs/_esm5/path-mapping')
 
 // ------------------------------------------------
 // CONSTANTS
@@ -45,6 +46,7 @@ const common = {
         ],
     },
     plugins: compact([
+        new webpack.optimize.ModuleConcatenationPlugin(),
         new NotifierPlugin({ title: 'Webpack' }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
@@ -54,6 +56,7 @@ const common = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
         alias: {
+            ...rxPaths(),
             '@': path.resolve(__dirname, 'src'),
         },
     },
@@ -65,7 +68,7 @@ const common = {
 // ------------------------------------------------
 const main = merge(common, {
     entry: {
-        vendor: VENDOR_FILES,
+        // vendor: VENDOR_FILES,
         app: ['./src/index.ts', './src/index.scss'],
     },
     output: {
@@ -74,11 +77,11 @@ const main = merge(common, {
     },
     plugins: [
         // new BundleAnalyzerPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            filename: 'vendor.bundle.js',
-            chunks: ['app'],
-        }),
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     name: 'vendor',
+        //     filename: 'vendor.bundle.js',
+        //     chunks: ['app'],
+        // }),
         new HTMLWebpackPlugin({
             filename: 'index.html',
             template: './src/index.ejs',

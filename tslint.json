@@ -3,6 +3,15 @@
         "@cotto/tslint-config"
     ],
     "rules": {
-        "no-implicit-dependencies": false
+        "no-implicit-dependencies": false,
+        "variable-name": {
+            "options": [
+                "ban-keywords",
+                "check-format",
+                "allow-pascal-case",
+                "allow-leading-underscore",
+                "allow-trailing-underscore"
+            ]
+        }
     }
 }

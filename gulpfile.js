@@ -23,7 +23,7 @@ const bs = BrowserSync.create()
 // ----------------------------------------------------------
 function runWebpack(options = {}) {
     const compiler = require('webpack')
-    const files = ['index.ts', 'index.scss', 'vendor/rxjs-import.ts'].map(x => `${paths.src}/${x}`)
+    const files = ['index.ts', 'index.scss'].map(x => `${paths.src}/${x}`)
     return gulp.src(files)
         .pipe(plumber())
         .pipe(webpack(options, compiler))
