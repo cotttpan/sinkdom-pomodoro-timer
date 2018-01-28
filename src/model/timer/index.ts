@@ -11,10 +11,10 @@ export * from './common'
 
 export function timer(ev: EventSource, state$: Observable<AppState>) {
     const apply = <T>(fn: (ev: EventSource, state$: Observable<AppState>) => T) => fn(ev, state$)
-    const mapReucer = map((fn: Reducer<State>) => (state: AppState) => ({ ...state, timer: fn(state.timer) }))
+    const mapReducer_ = map((fn: Reducer<State>) => (state: AppState) => ({ ...state, timer: fn(state.timer) }))
     const epics$ = values(_epics).map(apply)
     const reducers$ = values(_reducers).map(apply)
     const ACTION$ = merge(...epics$)
-    const REDUCER$ = merge(...reducers$).pipe(mapReucer)
+    const REDUCER$ = merge(...reducers$).pipe(mapReducer_)
     return { ACTION$, REDUCER$ }
 }
