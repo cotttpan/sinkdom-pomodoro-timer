@@ -46,11 +46,11 @@ const common = {
         ],
     },
     plugins: compact([
-        new webpack.optimize.ModuleConcatenationPlugin(),
         new NotifierPlugin({ title: 'Webpack' }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
         }),
+        isProd && new webpack.optimize.ModuleConcatenationPlugin(),
         isProd && new MinifyPlugin(),
     ]),
     resolve: {
