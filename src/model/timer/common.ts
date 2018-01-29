@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Observable'
-import { map, withLatestFrom } from 'rxjs/operators'
+import { map, shareReplay } from 'rxjs/operators'
 import pad from '@/utils/pad'
 
 //
@@ -12,10 +12,13 @@ declare global {
 }
 
 export interface State {
+    /* title */
     title: string
     isTitleEditing: boolean
+    /* time */
     left: number
     end: number
+    /* session */
     isWorking: boolean
     config: TimerConfig
     achievementCount: number
@@ -41,22 +44,16 @@ export const DEFAULT_TIMER_CONFIG: TimerConfig = {
     LONG_BREAK_INTERVAL: 15 * 60 * 1000,
     LONG_BREAK_AFTER: 4,
 }
-//
-// ─── SELECTOR ───────────────────────────────────────────────────────────────────
-//
-export const isTimerWorking = (state: State) => state.isWorking
-
-export const isTimeUp = (state: State) => state.left < 1000
-
 
 //
 // ─── HELPER / UTILS ─────────────────────────────────────────────────────────────────────
 //
 export const toDisplayTime = (left$: Observable<number>) => {
+    const shareReplay1 = shareReplay<string>(1)
     const mapPadZero = map((n: number) => pad(Math.max(n, 0), '0', 2))
-    const hour$ = left$.pipe(map(left => Math.floor(left / 1000 / 60 / 60) % 60), mapPadZero)
-    const min$ = left$.pipe(map(left => Math.floor(left / 1000 / 60) % 60), mapPadZero)
-    const sec$ = left$.pipe(map(left => Math.floor(left / 1000) % 60), mapPadZero)
+    const hour$ = left$.pipe(map(left => Math.floor(left / 1000 / 60 / 60) % 60), mapPadZero, shareReplay1)
+    const min$ = left$.pipe(map(left => Math.floor(left / 1000 / 60) % 60), mapPadZero, shareReplay1)
+    const sec$ = left$.pipe(map(left => Math.floor(left / 1000) % 60), mapPadZero, shareReplay1)
     return { hour$, min$, sec$ }
 }
 
@@ -72,12 +69,4 @@ export const calcNextInterval = (state: State) => {
     } else {
         return INTERVAL_TYPE.SHORT_BREAK_INTERVAL
     }
-}
-
-export const mapNextInterval = (state$: Observable<AppState>) => (action$: Observable<any>) => {
-    return action$.pipe(
-        withLatestFrom(state$, (_, s) => s.timer),
-        map(calcNextInterval),
-        map(type => ({ type, timestamp: Date.now() })),
-    )
 }

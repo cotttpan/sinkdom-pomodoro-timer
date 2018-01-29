@@ -2975,10 +2975,10 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
 
 "flux-helpers@git://github.com/cotttpan/flux-helpers":
-  version "0.0.6"
-  resolved "git://github.com/cotttpan/flux-helpers#6c2449c73fe60e07234b224c493c967215cae075"
+  version "0.0.7"
+  resolved "git://github.com/cotttpan/flux-helpers#48634d838f4930476afa53ad419b1e37d4ee13ea"
   dependencies:
-    "@cotto/utils.ts" "^0.2.4"
+    "@cotto/utils.ts" "^0.2.6"
     eventemitter2 "^5.0.1"
     rxjs "^5.5.6"
 

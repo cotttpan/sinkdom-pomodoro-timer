@@ -1,17 +1,19 @@
 import { createActionFactory } from 'flux-helpers'
-import { INTERVAL_TYPE } from '@/model/timer'
 
 interface Actions {
+    /* from client */
     TITLE_INPUT: Event
     TIELE_SUBSMIT: Event
     TITLE_SELECT_FOR_EIDT: Event
-    START: Event
-    PAUSE: Event
-    RESUME: Event
-    SKIP: Event
-    INTERVAL_START: { type: INTERVAL_TYPE, timestamp: number }
-    INTERVAL_END: any
+    START: any
+    PAUSE: any
+    RESUME: any
+    SKIP: any
+    /* from epic */
     TICK: number
+    TIMEUP: number
+    INTERVAL_START: number
+    INTERVAL_END: number
 }
 
 export default createActionFactory<Actions>('TIMER/')

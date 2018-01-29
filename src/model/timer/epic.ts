@@ -1,38 +1,35 @@
 import { Observable } from 'rxjs/Observable'
 import { timer } from 'rxjs/observable/timer'
-import { map, filter, withLatestFrom, shareReplay, concatMap, takeUntil } from 'rxjs/operators'
+import { map, filter, withLatestFrom, switchMap, takeUntil } from 'rxjs/operators'
 import { select, EventSource } from 'flux-helpers'
-import TIMER_ACTION from '@/action/timer'
-import { mapNextInterval, isTimeUp } from './common'
+import TIMER from '@/action/timer'
 
-export const intrvalStartEpic = (ev: EventSource, state$: Observable<AppState>) => {
-    return select(ev, TIMER_ACTION.START).pipe(
-        mapNextInterval(state$),
-        map(x => TIMER_ACTION.INTERVAL_START(x)),
-        shareReplay(1),
+export const intervalStartEpic = (ev: EventSource, state$: Observable<AppState>) => {
+    return select(ev, TIMER.START).pipe(
+        withLatestFrom(state$, (_, s) => s),
+        filter(s => !s.timer.isWorking),
+        map(() => TIMER.INTERVAL_START(Date.now())),
+    )
+}
+
+export const intervalEndEpic = (ev: EventSource) => {
+    return select(ev, [TIMER.SKIP, TIMER.TIMEUP]).pipe(
+        map(() => TIMER.INTERVAL_END(Date.now())),
     )
 }
 
 export const tickEpic = (ev: EventSource, _: Observable<AppState>) => {
-    const stop$ = select(ev, [TIMER_ACTION.PAUSE, TIMER_ACTION.SKIP, TIMER_ACTION.INTERVAL_END])
-    const runTimer = () => timer(0, 333).pipe(takeUntil(stop$))
-    const tickAction = () => TIMER_ACTION.TICK(Date.now())
-
-    return select(ev, [TIMER_ACTION.START, TIMER_ACTION.RESUME]).pipe(
-        concatMap(runTimer),
-        map(tickAction),
-        shareReplay(1),
+    const stop$ = select(ev, [TIMER.PAUSE, TIMER.SKIP, TIMER.TIMEUP])
+    return select(ev, [TIMER.INTERVAL_START, TIMER.RESUME]).pipe(
+        switchMap(() => timer(100, 1000).pipe(takeUntil(stop$))),
+        map(() => TIMER.TICK(Date.now())),
     )
 }
 
-export const intervalEndEpic = (ev: EventSource, state$: Observable<AppState>) => {
-    const endAction = () => TIMER_ACTION.INTERVAL_END(null)
-
-    return select(ev, TIMER_ACTION.TICK).pipe(
+export const timeupEpic = (ev: EventSource, state$: Observable<AppState>) => {
+    return select(ev, TIMER.TICK).pipe(
         withLatestFrom(state$, (_, s) => s.timer),
-        filter(isTimeUp),
-        map(endAction),
-        shareReplay(1),
+        filter(state => state.left < 1000),
+        map(() => TIMER.TIMEUP(Date.now())),
     )
 }
-
