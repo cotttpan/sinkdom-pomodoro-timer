@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable'
 import { debounceTime, distinctUntilChanged, observeOn } from 'rxjs/operators'
 import { subscribeOn } from 'rxjs/operators/subscribeOn' // https://github.com/ReactiveX/rxjs/issues/2900
-import { async } from 'rxjs/scheduler/async'
+import { animationFrame } from 'rxjs/scheduler/animationFrame'
 import { mount } from '@cotto/sinkdom'
 import { flux, isAction } from 'flux-helpers'
 
@@ -32,8 +32,8 @@ const handleEventWith = (listener: (ev: Event) => any) => (ev: Event) => {
 }
 const proxy = (next$: Observable<any>) => next$.pipe(
     distinctUntilChanged(),
-    observeOn(async),
-    subscribeOn(async),
+    observeOn(animationFrame),
+    subscribeOn(animationFrame),
 )
 
 /* mount */

@@ -47,11 +47,10 @@ export const DEFAULT_TIMER_CONFIG: TimerConfig = {
 // ─── HELPER / UTILS ─────────────────────────────────────────────────────────────────────
 //
 export const toDisplayTime = (left$: Observable<number>) => {
-    const shareReplay1 = shareReplay<string>(1)
     const mapPadZero = map((n: number) => pad(Math.max(n, 0), '0', 2))
-    const hour$ = left$.pipe(map(left => Math.floor(left / 1000 / 60 / 60) % 60), mapPadZero, shareReplay1)
-    const min$ = left$.pipe(map(left => Math.floor(left / 1000 / 60) % 60), mapPadZero, shareReplay1)
-    const sec$ = left$.pipe(map(left => Math.floor(left / 1000) % 60), mapPadZero, shareReplay1)
+    const hour$ = left$.pipe(map(left => Math.floor(left / 1000 / 60 / 60) % 60), mapPadZero, shareReplay(1))
+    const min$ = left$.pipe(map(left => Math.floor(left / 1000 / 60) % 60), mapPadZero, shareReplay(1))
+    const sec$ = left$.pipe(map(left => Math.floor(left / 1000) % 60), mapPadZero, shareReplay(1))
     return { hour$, min$, sec$ }
 }
 

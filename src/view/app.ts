@@ -9,8 +9,9 @@ export default function App(state$: Observable<AppState>) {
     const isEditing$ = state$.pipe(map(s => s.timerTitle.isEditing), shareReplay(1))
     const time = toDisplayTime(state$.pipe(map(s => s.timer.left), shareReplay(1)))
     const isWorking$ = state$.pipe(map(s => s.timer.isWorking), shareReplay(1))
+    const isPausing$ = state$.pipe(map(s => s.timer.isPausing), shareReplay(1))
 
     return div([
-        CountDownTimer({ title$, isEditing$, time, isWorking$ }),
+        CountDownTimer({ title$, isEditing$, time, isWorking$, isPausing$ }),
     ])
 }
