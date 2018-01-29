@@ -1,14 +1,11 @@
 import { of } from 'rxjs/observable/of'
-import { map, mapTo, pluck, filter, debounceTime, tap } from 'rxjs/operators'
+import { map, mapTo } from 'rxjs/operators'
 import { select, EventSource } from 'flux-helpers'
-import { isString } from '@cotto/utils.ts'
 import { State as S, DEFAULT_TIMER_CONFIG, calcNextInterval } from './common'
 import TIMER from '@/action/timer'
 
-export const initialStateReducer = (_: EventSource) => {
+export const initialState = (_: EventSource) => {
     return of((__: S): S => ({
-        title: '',
-        isTitleEditing: false,
         end: 0,
         left: DEFAULT_TIMER_CONFIG.WORK_INTERVAL,
         isWorking: false,
@@ -17,35 +14,6 @@ export const initialStateReducer = (_: EventSource) => {
         currentIntervalType: null,
     }))
 }
-
-//
-// ─── TITLE ──────────────────────────────────────────────────────────────────────
-//
-export const onTitleSelect = (ev: EventSource) => {
-    return select(ev, TIMER.TITLE_SELECT_FOR_EIDT).pipe(
-        mapTo((s: S): S => ({ ...s, isTitleEditing: true })),
-    )
-}
-
-export const onTitleInput = (ev: EventSource) => {
-    return select(ev, TIMER.TITLE_INPUT).pipe(
-        debounceTime(50),
-        pluck('payload', 'target', 'value'),
-        filter(isString),
-        map(title => (s: S): S => ({ ...s, title, isTitleEditing: true })),
-    )
-}
-
-export const onTitleSubsmit = (ev: EventSource) => {
-    return select(ev, TIMER.TIELE_SUBSMIT).pipe(
-        tap(action => action.payload.preventDefault()),
-        mapTo((s: S): S => ({ ...s, isTitleEditing: false })),
-    )
-}
-
-//
-// ─── TIMER ──────────────────────────────────────────────────────────────────────
-//
 
 /**
  * timerを初期化する

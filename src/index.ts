@@ -8,10 +8,11 @@ import { flux, isAction } from 'flux-helpers'
 //
 // ─── MODEL ──────────────────────────────────────────────────────────────────────
 //
-import { timer } from '@/model/timer/index'
+import timer from '@/model/timer'
+import timerTitle from '@/model/timer-title'
 import { logger } from '@/model/devtools/devtools'
 
-const models = [timer, logger]
+const models = [timer, timerTitle, logger]
 const store = flux(models, { wildcard: true })
 
 //

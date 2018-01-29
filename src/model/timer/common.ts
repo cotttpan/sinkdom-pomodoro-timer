@@ -12,9 +12,6 @@ declare global {
 }
 
 export interface State {
-    /* title */
-    title: string
-    isTitleEditing: boolean
     /* time */
     left: number
     end: number
