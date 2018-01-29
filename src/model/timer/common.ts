@@ -17,6 +17,7 @@ export interface State {
     end: number
     /* session */
     isWorking: boolean
+    isPausing: boolean
     config: TimerConfig
     achievementCount: number
     currentIntervalType: INTERVAL_TYPE | null

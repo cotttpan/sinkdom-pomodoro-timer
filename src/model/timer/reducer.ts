@@ -9,6 +9,7 @@ export const initialState = (_: EventSource) => {
         end: 0,
         left: DEFAULT_TIMER_CONFIG.WORK_INTERVAL,
         isWorking: false,
+        isPausing: false,
         config: DEFAULT_TIMER_CONFIG,
         achievementCount: 0,
         currentIntervalType: null,
@@ -24,7 +25,7 @@ export const onIntervalStart = (ev: EventSource) => {
         const type = state.currentIntervalType || calcNextInterval(state)
         const interval = state.config[type]
         const end = now + interval
-        return { ...state, end, left: interval, isWorking: true, currentIntervalType: type }
+        return { ...state, end, left: interval, isWorking: true, isPausing: false, currentIntervalType: type }
     }
     return select(ev, TIMER.INTERVAL_START).pipe(
         map(action => patch(action.payload)),
@@ -39,7 +40,7 @@ export const onIntervalEnd = (ev: EventSource) => {
         const type = calcNextInterval(state)
         const interval = state.config[type]
         const end = now + interval
-        return { ...state, end, left: interval, isWorking: false, currentIntervalType: type }
+        return { ...state, end, left: interval, isWorking: false, isPausing: false, currentIntervalType: type }
     }
     return select(ev, TIMER.INTERVAL_END).pipe(
         map(aciton => patch(aciton.payload)),
@@ -49,10 +50,16 @@ export const onIntervalEnd = (ev: EventSource) => {
 export const onTick = (ev: EventSource) => {
     const patch = (now: number) => (state: S): S => {
         const left = Math.max(0, state.end - now)
-        return { ...state, left, isWorking: true }
+        return { ...state, left, isWorking: true, isPausing: false }
     }
     return select(ev, TIMER.TICK).pipe(
         map(action => patch(action.payload)),
+    )
+}
+
+export const onPause = (ev: EventSource) => {
+    return select(ev, TIMER.PAUSE).pipe(
+        mapTo((s: S): S => ({ ...s, isPausing: true, isWorking: false })),
     )
 }
 
@@ -60,7 +67,7 @@ export const onResume = (ev: EventSource) => {
     const patch = (now: number) => (state: S): S => {
         const end = now + state.left
         const left = Math.max(0, end - now)
-        return { ...state, end, left, isWorking: true }
+        return { ...state, end, left, isWorking: true, isPausing: false }
     }
     return select(ev, TIMER.RESUME).pipe(
         map(() => patch(Date.now())),
@@ -71,7 +78,7 @@ export const onTimeUp = (ev: EventSource) => {
     return select(ev, TIMER.TIMEUP).pipe(
         mapTo((state: S): S => {
             const count = state.achievementCount + 1
-            return { ...state, isWorking: false, achievementCount: count }
+            return { ...state, isWorking: false, isPausing: false, achievementCount: count }
         }),
     )
 }

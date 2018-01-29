@@ -7,7 +7,7 @@ import TIMER from '@/action/timer'
 export const intervalStartEpic = (ev: EventSource, state$: Observable<AppState>) => {
     return select(ev, TIMER.START).pipe(
         withLatestFrom(state$, (_, s) => s),
-        filter(s => !s.timer.isWorking),
+        filter(s => !s.timer.isWorking && !s.timer.isPausing),
         map(() => TIMER.INTERVAL_START(Date.now())),
     )
 }
