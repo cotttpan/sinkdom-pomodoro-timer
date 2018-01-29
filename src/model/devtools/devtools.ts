@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable'
 import { concat } from 'rxjs/observable/concat'
 import { first, withLatestFrom, tap, mapTo } from 'rxjs/operators'
 
-export function logger(ev: EventSource, state$: Observable<any>) {
+export default function logger(ev: EventSource, state$: Observable<any>) {
     const withDevTools = (
         process.env.NODE_ENV === 'development'
         && typeof window !== 'undefined'
