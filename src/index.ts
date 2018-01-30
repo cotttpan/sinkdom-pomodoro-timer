@@ -4,14 +4,15 @@ import { take, debounceTime, distinctUntilChanged, observeOn } from 'rxjs/operat
 import { animationFrame } from 'rxjs/scheduler/animationFrame'
 import { mount } from '@cotto/sinkdom'
 import { flux, isAction } from 'flux-helpers'
+import App from '@/view/app'
+import { requestNotificationPermission } from '@/utils/notification'
 
-//
-// ─── MODEL ──────────────────────────────────────────────────────────────────────
-//
+/* models */
 import timer from '@/model/timer'
 import timerTitle from '@/model/timer-title'
 import logger from '@/model/devtools/devtools'
 
+/* store */
 const models = [timer, timerTitle, logger]
 const store = flux(models, { wildcard: true })
 const state$ = concat(
@@ -19,14 +20,6 @@ const state$ = concat(
     store.state$.pipe(debounceTime(1)), // それ以降は同期的更新通知を1つにまとめるためにdebounceする
 )
 
-//
-// ─── VIEW ───────────────────────────────────────────────────────────────────────
-//
-import App from '@/view/app'
-const view = App(state$)
-//
-// ─── RENDER ─────────────────────────────────────────────────────────────────────
-//
 /* mount options */
 const handleEventWith = (listener: (ev: Event) => any) => (ev: Event) => {
     const action = listener(ev)
@@ -39,4 +32,7 @@ const proxy = (next$: Observable<any>) => next$.pipe(
 )
 
 /* mount */
-mount(view, document.body, { handleEventWith, proxy })
+mount(App(state$), document.body, { handleEventWith, proxy })
+
+/* notification */
+requestNotificationPermission()
