@@ -7,7 +7,7 @@ interface Reducer<T, K extends keyof T> {
     (ev: EventSource, state$: Observable<T>): Observable<(s: T[K]) => T[K]>
 }
 interface Epic<T> {
-    (ev: EventSource, state$: Observable<T>): Observable<Action>
+    (ev: EventSource, state$: Observable<T>): Observable<Action | null>
 }
 
 export default function toModel<T, K extends keyof T>(
