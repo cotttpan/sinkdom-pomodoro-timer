@@ -11,7 +11,9 @@ export default function App(state$: Observable<AppState>) {
     const isWorking$ = state$.pipe(map(s => s.timer.isWorking), shareReplay(1))
     const isPausing$ = state$.pipe(map(s => s.timer.isPausing), shareReplay(1))
 
-    return div([
-        CountDownTimer({ title$, isEditing$, time, isWorking$, isPausing$ }),
+    return div({ class: 'container' }, [
+        div({ class: ' columns' }, [
+            CountDownTimer({ title$, isEditing$, time, isWorking$, isPausing$ }),
+        ]),
     ])
 }
